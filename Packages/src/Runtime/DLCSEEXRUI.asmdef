@@ -1,0 +1,17 @@
+{
+    "name": "DLCSEEXRUI",
+    "rootNamespace": "",
+    "references": [
+        "Oculus.VR",
+        "Oculus.Interaction"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
