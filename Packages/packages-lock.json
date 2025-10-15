@@ -4,7 +4,9 @@
       "version": "file:src",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.meta.xr.sdk.all": "78.0.0"
+      }
     },
     "com.meta.xr.mrutilitykit": {
       "version": "78.0.0",
