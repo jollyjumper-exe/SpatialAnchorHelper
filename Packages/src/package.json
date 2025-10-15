@@ -1,4 +1,4 @@
-{
+ {
   "name": "com.dlc-see-digital-industrial-metaverse.xrui",
   "displayName": "DLC-SEE XRUI",
   "version": "1.0.0",
@@ -10,5 +10,6 @@
     "url": "https://gitlab.iue.fh-kiel.de/dlc-see-digital-industrial-metaverse/dlc-see-xrui.git?path=Packages/src"
   },
   "dependencies": {
+    "com.meta.xr.sdk.all" : "78.0.0"
   }
 }
