@@ -1,9 +1,9 @@
-# DLC-SEE XRUI
+# Spatial Anchor Helper
 
 ## Add to project
 
 In your Unity Project, go to Edit --> Package Manager --> Add Package via Git-URL and enter
 
 ```
-https://gitlab.iue.fh-kiel.de/dlc-see-digital-industrial-metaverse/dlc-see-xrui.git?path=Packages/src/
+https://github.com/jollyjumper-exe/SpatialAnchorHelper.git?path=Packages/src/
 ```
