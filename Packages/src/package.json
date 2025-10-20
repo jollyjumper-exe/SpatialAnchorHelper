@@ -1,9 +1,9 @@
  {
-  "name": "com.dlc-see-digital-industrial-metaverse.xrui",
-  "displayName": "DLC-SEE XRUI",
+  "name": "com.fh-kiel.spatial-anchor-helper",
+  "displayName": "Spatial Anchor Helper",
   "version": "1.0.0",
-  "unity": "2021.3",
-  "description": "A Unity package with the DLC-SEE UI Template for XR.",
+  "unity": "6000.1",
+  "description": "A Unity package with the Spatial Anchor Helper.",
   "author": {
     "name": "Mortimer van Egmond",
     "email": "mortimer.van-egmond@fh-kiel.de",

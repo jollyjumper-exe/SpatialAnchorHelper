@@ -20,4 +20,6 @@
   <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
   <uses-permission android:name="com.oculus.permission.USE_ANCHOR_API" />
   <uses-permission android:name="com.oculus.permission.USE_SCENE" />
+  <uses-permission android:name="com.oculus.permission.ACCESS_SCENE_UNDERSTANDING" />
+  <uses-permission android:name="com.oculus.permission.USE_ANCHOR" />
 </manifest>
