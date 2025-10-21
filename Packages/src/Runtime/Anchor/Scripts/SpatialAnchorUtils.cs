@@ -60,9 +60,18 @@ public static class SpatialAnchorUtils
         Debug.Log("Cleared all spatial anchors.");
     }
     
-    public static async void SaveSpatialAnchors(List<Anchor> anchors, string roomId, string scenarioId)
+    public static async void SaveSpatialAnchors(List<Anchor> anchors, string roomId, string scenarioId, string subfolder = "anchors")
     {
-        string path = Path.Combine(Application.persistentDataPath, roomId);
+        // Construct the directory and file paths
+        string folderPath = Path.Combine(Application.persistentDataPath, subfolder);
+        string path = Path.Combine(folderPath, roomId);
+
+        // Ensure the directory exists
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+            Debug.Log($"Created directory: {folderPath}");
+        }
 
         // Load existing JSON or create empty dictionary
         Dictionary<string, List<AnchorSaveData>> allScenarios = File.Exists(path)
@@ -98,9 +107,9 @@ public static class SpatialAnchorUtils
         Debug.Log($"Saved {saveDataList.Count} anchors for scenario '{scenarioId}' to {path}");
     }
 
-    public static async Task<List<Anchor>> LoadSpatialAnchors(string roomId, string scenarioId)
+    public static async Task<List<Anchor>> LoadSpatialAnchors(string roomId, string scenarioId, string subfolder = "anchors")
     {
-        string path = Path.Combine(Application.persistentDataPath, roomId);
+        string path = Path.Combine(Application.persistentDataPath, subfolder, roomId);
         if (!File.Exists(path))
         {
             Debug.LogWarning($"Anchor file not found at {path}");
@@ -182,5 +191,54 @@ public static class SpatialAnchorUtils
         }
 
         return anchors;
+    }
+
+    public static void ClearRoomCache(string roomId, string subfolder = "anchors")
+    {
+        string path = Path.Combine(Application.persistentDataPath, subfolder, roomId);
+
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Debug.Log($"Deleted anchor cache for room '{roomId}' at {path}");
+            }
+            else
+            {
+                Debug.LogWarning($"No cache file found for room '{roomId}' at {path}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to delete cache for room '{roomId}': {ex.Message}");
+        }
+    }
+
+    public static void ClearAllCaches(string subfolder = "anchors")
+    {
+        string folderPath = Path.Combine(Application.persistentDataPath, subfolder);
+
+        try
+        {
+            if (Directory.Exists(folderPath))
+            {
+                string[] files = Directory.GetFiles(folderPath);
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+
+                Debug.Log($"Cleared all anchor cache files in '{folderPath}'");
+            }
+            else
+            {
+                Debug.LogWarning($"No anchor cache folder found at '{folderPath}'");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to clear all caches: {ex.Message}");
+        }
     }
 }
