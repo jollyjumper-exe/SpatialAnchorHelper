@@ -87,20 +87,11 @@ public class SpatialAnchorManager : MonoBehaviour
     {
         while (_roomID == null)
         {
-            MRUKRoom room = FindObjectOfType<MRUKRoom>();
-            if (room != null)
+            if (MRUK.Instance != null && MRUK.Instance.GetCurrentRoom() != null)
             {
-                string name = room.gameObject.name;
-                Debug.Log($"Found room object named: {name}");
-
-                string[] parts = name.Split(' ');
-                if (parts.Length >= 3)
-                {
-                    string extractedRoomId = parts[2];
-                    Debug.Log($"Extracted Room ID: {extractedRoomId}");
-                    _roomID = extractedRoomId;
-                    yield break;
-                }
+                _roomID = MRUK.Instance.GetCurrentRoom().Anchor.Uuid.ToString();
+                Debug.Log($"Found Room {_roomID}");
+                yield break;
             }
             else
             {
