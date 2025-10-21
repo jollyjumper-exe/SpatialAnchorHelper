@@ -9,7 +9,10 @@ using Meta.XR.MRUtilityKit;
 public class SpatialAnchorManager : MonoBehaviour
 {
     public static SpatialAnchorManager Instance { get; private set; }
-    public List<Anchor> anchors { get; private set; }
+
+    [SerializeField] private string _persistentDataLocation = "anchors";
+
+    private List<Anchor> _anchors;
     private string _currentLayoutID = "Playground";
     private string _roomID;
 
@@ -26,21 +29,21 @@ public class SpatialAnchorManager : MonoBehaviour
 
     void Start()
     {
-        anchors = new List<Anchor>();
+        _anchors = new List<Anchor>();
         StartCoroutine(FetchRoomIdCoroutine());
     }
 
     public void SaveSpatialAnchors(string layoutID)
     {
         if (_roomID == null) return;
-        SpatialAnchorUtils.SaveSpatialAnchors(anchors, _roomID, layoutID);
+        SpatialAnchorUtils.SaveSpatialAnchors(_anchors, _roomID, layoutID, _persistentDataLocation);
     }
 
     public async void LoadSpatialAnchors(string layoutID)
     {
         if (_roomID == null) return;
         ClearSpatialAnchors();
-        anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID);
+        _anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
     }
 
     public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type)
@@ -61,13 +64,23 @@ public class SpatialAnchorManager : MonoBehaviour
             type = type
         };
 
-        anchors.Add(anchor);
+        _anchors.Add(anchor);
     }
 
     public void ClearSpatialAnchors()
     {
         SpatialAnchorUtils.ClearSpatialAnchors();
-        anchors.Clear();
+        _anchors.Clear();
+    }
+
+    public void ClearRoomCache()
+    {
+        SpatialAnchorUtils.ClearRoomCache(_roomID, _persistentDataLocation);
+    }
+
+    public void ClearAllCaches()
+    {
+        SpatialAnchorUtils.ClearAllCaches(_persistentDataLocation);
     }
 
     private IEnumerator FetchRoomIdCoroutine()
@@ -81,9 +94,9 @@ public class SpatialAnchorManager : MonoBehaviour
                 Debug.Log($"Found room object named: {name}");
 
                 string[] parts = name.Split(' ');
-                if (parts.Length >= 2)
+                if (parts.Length >= 3)
                 {
-                    string extractedRoomId = parts[1];
+                    string extractedRoomId = parts[2];
                     Debug.Log($"Extracted Room ID: {extractedRoomId}");
                     _roomID = extractedRoomId;
                     yield break;

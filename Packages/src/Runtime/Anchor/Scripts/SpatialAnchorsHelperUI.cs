@@ -116,6 +116,16 @@ public class SpatialAnchorsHelperUI : MonoBehaviour
     {
         _spatialAnchorManager.ClearSpatialAnchors();
     }
+
+    public void ClearRoomCache()
+    {
+        _spatialAnchorManager.ClearRoomCache();
+    }
+
+    public void ClearAllCaches()
+    {
+        _spatialAnchorManager.ClearAllCaches();
+    }
 }
 
 [System.Serializable]
