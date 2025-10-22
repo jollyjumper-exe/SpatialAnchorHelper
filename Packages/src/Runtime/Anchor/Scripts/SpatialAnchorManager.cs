@@ -63,7 +63,7 @@ public class SpatialAnchorManager : MonoBehaviour
             prefabPath = prefabPath,
             type = type
         };
-
+        
         _anchors.Add(anchor);
     }
 
