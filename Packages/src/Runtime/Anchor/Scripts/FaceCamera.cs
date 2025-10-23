@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SpatialAnchorHelper
+namespace SAH
 {
     public class FaceCamera : MonoBehaviour
     {

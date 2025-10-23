@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-namespace SpatialAnchorHelper
+namespace SAH
 {
     public class DropdownToHelperBridge : MonoBehaviour
     {
