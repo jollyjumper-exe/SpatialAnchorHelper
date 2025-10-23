@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace SpatialAnchorHelper
+namespace SAH
 {
     public class DelayedDisabler : MonoBehaviour
     {

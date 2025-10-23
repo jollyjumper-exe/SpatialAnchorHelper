@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Meta.XR.MRUtilityKit;
 
-namespace SpatialAnchorHelper
+namespace SAH
 {
     public class SpatialAnchorHelper : MonoBehaviour
     {

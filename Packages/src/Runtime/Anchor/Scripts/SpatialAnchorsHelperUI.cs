@@ -5,7 +5,7 @@ using Oculus.Interaction.Input;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace SpatialAnchorHelper
+namespace SAH
 {
     public class SpatialAnchorsHelperUI : MonoBehaviour
     {

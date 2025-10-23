@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace SpatialAnchorHelper
+namespace SAH
 {
     [System.Serializable]
     public struct AnchorSaveData
