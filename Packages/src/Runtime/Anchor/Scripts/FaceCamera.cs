@@ -1,17 +1,20 @@
 using UnityEngine;
 
-public class FaceCamera : MonoBehaviour
+namespace SpatialAnchorHelper
 {
-    private Transform mainCamera;
-
-    void Start()
+    public class FaceCamera : MonoBehaviour
     {
-        mainCamera = Camera.main.transform;
-    }
+        private Transform mainCamera;
 
-    void LateUpdate()
-    {
-        transform.LookAt(mainCamera);
-        transform.rotation = Quaternion.LookRotation(transform.position - mainCamera.position);
+        void Start()
+        {
+            mainCamera = Camera.main.transform;
+        }
+
+        void LateUpdate()
+        {
+            transform.LookAt(mainCamera);
+            transform.rotation = Quaternion.LookRotation(transform.position - mainCamera.position);
+        }
     }
 }

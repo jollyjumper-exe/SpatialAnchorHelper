@@ -1,17 +1,21 @@
 using UnityEngine;
 using System.Collections;
-public class DelayedDisabler : MonoBehaviour
+
+namespace SpatialAnchorHelper
 {
-    [SerializeField] private MonoBehaviour component;
-
-    public void DelayedDisable()
+    public class DelayedDisabler : MonoBehaviour
     {
-        StartCoroutine(DisableAfterFrame());
+        [SerializeField] private MonoBehaviour component;
+
+        public void DelayedDisable()
+        {
+            StartCoroutine(DisableAfterFrame());
+        }
+
+        private IEnumerator DisableAfterFrame()
+        {
+            yield return null;
+            component.enabled = false;
+        }
     }
-
-    private IEnumerator DisableAfterFrame()
-    {
-        yield return null;
-        component.enabled = false;
-}
 }
