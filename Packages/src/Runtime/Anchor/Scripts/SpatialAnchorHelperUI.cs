@@ -7,12 +7,10 @@ using System.Collections.Generic;
 
 namespace SAH
 {
-    public class SpatialAnchorsHelperUI : MonoBehaviour
+    public class SpatialAnchorHelperUI : SpatialAnchorHelperFunctionsWrapper
     {
-        public string layoutID;
         [SerializeField] Material hoverMaterial;
 
-        private SpatialAnchorHelper _spatialAnchorHelper;
         private bool _isPlacing = false;
         private bool _wasPinchingLastFrame = false;
         private string _currentPrefabPath;
@@ -102,31 +100,6 @@ namespace SAH
 
             _ghostModel.transform.position = position;
             _ghostModel.transform.rotation = rotation;
-        }
-
-        public void LoadSpatialAnchors()
-        {
-            _spatialAnchorHelper.LoadSpatialAnchors(layoutID);
-        }
-
-        public void SaveSpatialAnchors()
-        {
-            _spatialAnchorHelper.SaveSpatialAnchors(layoutID);
-        }
-
-        public void ClearSpatialAnchors()
-        {
-            _spatialAnchorHelper.ClearSpatialAnchors();
-        }
-
-        public void ClearRoomCache()
-        {
-            _spatialAnchorHelper.ClearRoomCache();
-        }
-
-        public void ClearAllCaches()
-        {
-            _spatialAnchorHelper.ClearAllCaches();
         }
     }
 
