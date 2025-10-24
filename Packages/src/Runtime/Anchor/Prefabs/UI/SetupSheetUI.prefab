@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dropdown: {fileID: 6213007788998922710}
-  _spatialAnchorsHelperUI: {fileID: 1079943843626018712}
+  _spatialAnchorHelperFunctionsWrapper: {fileID: 7553656328152693838}
   sendValueOnStart: 1
 --- !u!1 &188907517875653464
 GameObject:
@@ -1535,7 +1535,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 481.5, y: -255}
+  m_AnchoredPosition: {x: 320, y: -255}
   m_SizeDelta: {x: 410, y: 210}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7201882492435884347
@@ -1585,7 +1585,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3646146930877834815}
-  - component: {fileID: 1079943843626018712}
+  - component: {fileID: 7553656328152693838}
   m_Layer: 0
   m_Name: SpatialAnchorsHelper
   m_TagString: Untagged
@@ -1608,7 +1608,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3250323539927336280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1079943843626018712
+--- !u!114 &7553656328152693838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1617,7 +1617,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6550342727055986755}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 229b5acae0a69e64ca439c53db35c48a, type: 3}
+  m_Script: {fileID: 11500000, guid: 134d774faa88bb540a75bc16765bc432, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   layoutID: 
@@ -1986,7 +1986,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2000,7 +2000,7 @@ PrefabInstance:
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, SpatialAnchorHelper
+      value: SAH.SpatialAnchorHelperFunctionsWrapper, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
@@ -2045,7 +2045,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 4539716189990238744, guid: ab75355f2918a1946b6910b7906004cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2059,7 +2059,7 @@ PrefabInstance:
     - target: {fileID: 4539716189990238744, guid: ab75355f2918a1946b6910b7906004cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, SpatialAnchorHelper
+      value: SAH.SpatialAnchorHelperFunctionsWrapper, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 4539716189990238744, guid: ab75355f2918a1946b6910b7906004cc,
         type: 3}
@@ -2261,7 +2261,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 4539716189990238744, guid: ab75355f2918a1946b6910b7906004cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2275,7 +2275,7 @@ PrefabInstance:
     - target: {fileID: 4539716189990238744, guid: ab75355f2918a1946b6910b7906004cc,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, Assembly-CSharp
+      value: SAH.SpatialAnchorHelperFunctionsWrapper, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 4539716189990238744, guid: ab75355f2918a1946b6910b7906004cc,
         type: 3}
@@ -2729,7 +2729,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2743,7 +2743,7 @@ PrefabInstance:
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, Assembly-CSharp
+      value: SAH.SpatialAnchorHelperFunctionsWrapper, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
@@ -2910,7 +2910,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2924,7 +2924,7 @@ PrefabInstance:
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, Assembly-CSharp
+      value: SAH.SpatialAnchorHelperFunctionsWrapper, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
@@ -3091,7 +3091,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -3105,7 +3105,7 @@ PrefabInstance:
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, Assembly-CSharp
+      value: SAH.SpatialAnchorHelperUI, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
@@ -3279,7 +3279,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -3293,7 +3293,7 @@ PrefabInstance:
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, Assembly-CSharp
+      value: SAH.SpatialAnchorHelperUI, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
@@ -3467,7 +3467,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1079943843626018712}
+      objectReference: {fileID: 7553656328152693838}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -3481,7 +3481,7 @@ PrefabInstance:
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SpatialAnchorsHelperUI, Assembly-CSharp
+      value: SAH.SpatialAnchorHelperUI, SpatialAnchorHelper
       objectReference: {fileID: 0}
     - target: {fileID: 7602859641222839043, guid: 1ceb2d507d868cd49838958fd916ba33,
         type: 3}

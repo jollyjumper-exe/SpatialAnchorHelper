@@ -6,7 +6,7 @@ namespace SAH
     public class DropdownToHelperBridge : MonoBehaviour
     {
         [SerializeField] private TMP_Dropdown _dropdown;
-        [SerializeField] private SpatialAnchorsHelperUI _spatialAnchorsHelperUI;
+        [SerializeField] private SpatialAnchorHelperFunctionsWrapper _spatialAnchorHelperFunctionsWrapper;
 
         public bool sendValueOnStart = true;
 
@@ -17,7 +17,7 @@ namespace SAH
             if (sendValueOnStart)
             {
                 string selectedValue = _dropdown.options[_dropdown.value].text;
-                _spatialAnchorsHelperUI.layoutID = selectedValue;
+                _spatialAnchorHelperFunctionsWrapper.layoutID = selectedValue;
             }
 
         }
@@ -25,7 +25,7 @@ namespace SAH
         private void OnDropdownChanged(int index)
         {
             string selectedValue = _dropdown.options[index].text;
-            _spatialAnchorsHelperUI.layoutID = selectedValue;
+            _spatialAnchorHelperFunctionsWrapper.layoutID = selectedValue;
         }
 
     }
