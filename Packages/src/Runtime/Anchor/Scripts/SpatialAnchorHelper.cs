@@ -45,6 +45,7 @@ namespace SAH
             if (_roomID == null) return;
             ClearSpatialAnchors();
             _anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
+            if (_anchors == null) _anchors = new List<Anchor>();
         }
 
         public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type)
