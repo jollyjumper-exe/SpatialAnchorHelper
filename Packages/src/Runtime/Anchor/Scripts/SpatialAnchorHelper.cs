@@ -28,6 +28,16 @@ namespace SAH
             Instance = this;
         }
 
+        private void OnEnable()
+        {
+            SpatialAnchorSpawnEmitter.OnDespawned += RemoveSpatialAnchor;
+        }
+
+        private void OnDisable()
+        {
+            SpatialAnchorSpawnEmitter.OnDespawned += RemoveSpatialAnchor;
+        }
+
         void Start()
         {
             _anchors = new List<Anchor>();
@@ -102,6 +112,19 @@ namespace SAH
 
                 yield return new WaitForSeconds(0.1f); // Wait 100ms before trying again
             }
+        }
+
+        private void RemoveSpatialAnchor(SpatialAnchorSpawnEmitter emitter)
+        {
+            int index = _anchors.FindIndex(a => a.anchor == emitter.spatialAnchor);
+
+            if (index == -1)
+            {
+                Debug.LogWarning($"Anchor not found for emitter {emitter.name}");
+                return;
+            }
+
+            _anchors.RemoveAt(index);
         }
     }
 }
