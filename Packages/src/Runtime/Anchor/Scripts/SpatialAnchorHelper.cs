@@ -35,7 +35,7 @@ namespace SAH
 
         private void OnDisable()
         {
-            SpatialAnchorSpawnEmitter.OnDespawned += RemoveSpatialAnchor;
+            SpatialAnchorSpawnEmitter.OnDespawned -= RemoveSpatialAnchor;
         }
 
         void Start()
