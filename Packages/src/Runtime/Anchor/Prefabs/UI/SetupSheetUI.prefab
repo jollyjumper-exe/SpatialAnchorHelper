@@ -512,6 +512,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1183,6 +1184,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1535,7 +1537,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 320, y: -255}
+  m_AnchoredPosition: {x: 1100.5, y: -255}
   m_SizeDelta: {x: 410, y: 210}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7201882492435884347
@@ -1622,6 +1624,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layoutID: 
   hoverMaterial: {fileID: 2100000, guid: 2382368b7b1c90843b16d9b83ff17d0f, type: 2}
+  SetupObject: {fileID: 7406647740922620686, guid: c47ebc059410dce48a8ec29d59c98079,
+    type: 3}
 --- !u!1 &8119457917535149799
 GameObject:
   m_ObjectHideFlags: 0

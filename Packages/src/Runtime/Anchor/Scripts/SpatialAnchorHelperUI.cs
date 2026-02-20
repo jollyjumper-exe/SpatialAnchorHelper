@@ -10,6 +10,7 @@ namespace SAH
     public class SpatialAnchorHelperUI : SpatialAnchorHelperFunctionsWrapper
     {
         [SerializeField] Material hoverMaterial;
+        [SerializeField] GameObject SetupObject;
 
         private bool _isPlacing = false;
         private bool _wasPinchingLastFrame = false;
@@ -31,9 +32,10 @@ namespace SAH
                 bool isPinching = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.Hands);
                 if (isPinching)
                 {
-                    PlaceSpatialAnchorAtController();
+                    //PlaceSpatialAnchorAtController();
+                    PlaceSetupObjectAtController();
                     _isPlacing = false;
-                    Destroy(_ghostModel);
+                    //Destroy(_ghostModel);
                 }
             }
         }
@@ -46,6 +48,34 @@ namespace SAH
                 _isPlacing = true;
                 if (_ghostModel != null) Destroy(_ghostModel);
             }
+        }
+
+        public void PlaceAndSaveAnchor(Transform transform)
+        {
+            Vector3 position = transform.position;
+            Quaternion rawRotation = transform.rotation;
+            Vector3 euler = rawRotation.eulerAngles;
+            euler.x = 0;
+            euler.z = 0;
+            Quaternion rotation = Quaternion.Euler(euler);
+
+            _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, _currentPrefabPath, _currentAnchorType);
+        }
+
+        private void PlaceSetupObjectAtController()
+        {
+            Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
+            Vector3 euler = rawRotation.eulerAngles;
+            euler.x = 0;
+            euler.z = 0;
+            Quaternion rotation = Quaternion.Euler(euler);
+
+            SetupObject setupObject = Instantiate(SetupObject, position, rotation).GetComponent<SetupObject>();
+            setupObject.SetGhostModel(_ghostModel);
+            setupObject.SetPositionAndRotation(position, rotation);
+            setupObject.SetSpatialAnchorHelperUI(this);
+
         }
 
         private void PlaceSpatialAnchorAtController()
@@ -67,13 +97,15 @@ namespace SAH
                 _ghostModel = new GameObject("GhostModel");
                 GameObject prefab = Resources.Load<GameObject>(_currentPrefabPath);
 
+                /*
                 var parentMesh = prefab.GetComponent<MeshFilter>();
                 if (parentMesh != null)
                 {
-                    _ghostModel.AddComponent<MeshFilter>().mesh = parentMesh.sharedMesh;
+                    _ghostModel.AddComponent<MeshFilter>().mesh = parentMesh.sharedMesh; //parentMesh.sharedMesh;
                     _ghostModel.AddComponent<MeshRenderer>().material = hoverMaterial;
                 }
-
+                */
+                
                 var childMesh = prefab.GetComponentsInChildren<MeshFilter>();
                 if (childMesh != null)
                 {
