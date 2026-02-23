@@ -6,13 +6,8 @@ namespace SAH{
     public class SetupObject : MonoBehaviour
     {
         [SerializeField] private Button _button;
+        [SerializeField] private Gizmo _gizmo;
         private GameObject _ghostModel;
-        
-        
-        private void Start()
-        {
-
-        }
 
         public void SetPositionAndRotation(Vector3 position, Quaternion rotation)
         {
@@ -40,13 +35,12 @@ namespace SAH{
                 }
             }
 
-            Debug.Log("Center: " + bounds.center);
-            Debug.Log("Size: " + bounds.size);
-
             Vector3 pos = bounds.center;
             pos.y += bounds.size.y/2;
 
             _button.GetComponentInParent<Canvas>().transform.position = pos;
+
+            _gizmo.target = transform;
 
         }
 
