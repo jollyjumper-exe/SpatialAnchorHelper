@@ -32,10 +32,8 @@ namespace SAH
                 bool isPinching = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.Hands);
                 if (isPinching)
                 {
-                    //PlaceSpatialAnchorAtController();
                     PlaceSetupObjectAtController();
                     _isPlacing = false;
-                    //Destroy(_ghostModel);
                 }
             }
         }
@@ -65,6 +63,35 @@ namespace SAH
         private void PlaceSetupObjectAtController()
         {
             Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+            if (true)
+            {
+                RaycastHit hit;
+                float rayDistance = 2f;
+                bool foundHit = false;
+                Vector3 hitPoint = position;
+
+                if (Physics.Raycast(position, Vector3.down, out hit, rayDistance))
+                {
+                    hitPoint = hit.point;
+                    foundHit = true;
+                }
+                else if (Physics.Raycast(position, Vector3.up, out hit, rayDistance))
+                {
+                    hitPoint = hit.point;
+                    foundHit = true;
+                }
+
+                if (foundHit)
+                {
+                    position = hitPoint;
+                }
+                else
+                {
+                    Debug.LogWarning("No surface found to snap anchor to.");
+                }
+            }
+
             Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
             Vector3 euler = rawRotation.eulerAngles;
             euler.x = 0;
@@ -81,6 +108,35 @@ namespace SAH
         private void PlaceSpatialAnchorAtController()
         {
             Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+            if (true)
+            {
+                RaycastHit hit;
+                float rayDistance = 2f;
+                bool foundHit = false;
+                Vector3 hitPoint = position;
+
+                if (Physics.Raycast(position, Vector3.down, out hit, rayDistance))
+                {
+                    hitPoint = hit.point;
+                    foundHit = true;
+                }
+                else if (Physics.Raycast(position, Vector3.up, out hit, rayDistance))
+                {
+                    hitPoint = hit.point;
+                    foundHit = true;
+                }
+
+                if (foundHit)
+                {
+                    position = hitPoint;
+                }
+                else
+                {
+                    Debug.LogWarning("No surface found to snap anchor to.");
+                }
+            }
+
             Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
             Vector3 euler = rawRotation.eulerAngles;
             euler.x = 0;
@@ -96,15 +152,6 @@ namespace SAH
             {
                 _ghostModel = new GameObject("GhostModel");
                 GameObject prefab = Resources.Load<GameObject>(_currentPrefabPath);
-
-                /*
-                var parentMesh = prefab.GetComponent<MeshFilter>();
-                if (parentMesh != null)
-                {
-                    _ghostModel.AddComponent<MeshFilter>().mesh = parentMesh.sharedMesh; //parentMesh.sharedMesh;
-                    _ghostModel.AddComponent<MeshRenderer>().material = hoverMaterial;
-                }
-                */
                 
                 var childMesh = prefab.GetComponentsInChildren<MeshFilter>();
                 if (childMesh != null)
@@ -124,6 +171,35 @@ namespace SAH
             }
 
             Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+            if (true)
+            {
+                RaycastHit hit;
+                float rayDistance = 2f;
+                bool foundHit = false;
+                Vector3 hitPoint = position;
+
+                if (Physics.Raycast(position, Vector3.down, out hit, rayDistance))
+                {
+                    hitPoint = hit.point;
+                    foundHit = true;
+                }
+                else if (Physics.Raycast(position, Vector3.up, out hit, rayDistance))
+                {
+                    hitPoint = hit.point;
+                    foundHit = true;
+                }
+
+                if (foundHit)
+                {
+                    position = hitPoint;
+                }
+                else
+                {
+                    Debug.LogWarning("No surface found to snap anchor to.");
+                }
+            }
+            
             Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
             Vector3 euler = rawRotation.eulerAngles;
             euler.x = 0;
