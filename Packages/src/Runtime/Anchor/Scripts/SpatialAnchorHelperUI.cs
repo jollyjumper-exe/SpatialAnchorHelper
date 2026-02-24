@@ -150,24 +150,25 @@ namespace SAH
         {
             if (_ghostModel == null)
             {
-                _ghostModel = new GameObject("GhostModel");
                 GameObject prefab = Resources.Load<GameObject>(_currentPrefabPath);
-                
-                var childMesh = prefab.GetComponentsInChildren<MeshFilter>();
-                if (childMesh != null)
+                _ghostModel = Object.Instantiate(prefab);
+                _ghostModel.name = "GhostModel";
+
+                foreach (var renderer in _ghostModel.GetComponentsInChildren<MeshRenderer>())
                 {
-                    foreach (var item in childMesh)
-                    {
-                        var newGo = new GameObject(item.name);
-                        newGo.transform.parent = _ghostModel.transform;
-                        newGo.transform.localPosition = item.transform.localPosition;
-                        newGo.transform.localRotation = item.transform.localRotation;
-                        newGo.transform.localScale = item.transform.localScale;
-                        newGo.AddComponent<MeshFilter>().mesh = item.sharedMesh;
-                        newGo.AddComponent<MeshRenderer>().material = hoverMaterial;
-                    }
+                    var materials = new Material[renderer.sharedMaterials.Length];
+                    for (int i = 0; i < materials.Length; i++)
+                        materials[i] = hoverMaterial;
+                    renderer.sharedMaterials = materials;
                 }
 
+                foreach (var component in _ghostModel.GetComponentsInChildren<Component>())
+                {
+                    if (component is Transform || component is MeshFilter || component is MeshRenderer)
+                        continue;
+
+                    Object.Destroy(component);
+                }
             }
 
             Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
