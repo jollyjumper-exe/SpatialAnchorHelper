@@ -66,8 +66,6 @@ namespace SAH
             Vector3 position = transform.position;
             Quaternion rawRotation = transform.rotation;
             Vector3 euler = rawRotation.eulerAngles;
-            euler.x = 0;
-            euler.z = 0;
             Quaternion rotation = Quaternion.Euler(euler);
 
             _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, prefabPath, _currentAnchorType);
