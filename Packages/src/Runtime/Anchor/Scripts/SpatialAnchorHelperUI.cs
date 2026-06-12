@@ -167,24 +167,40 @@ namespace SAH
             if (_ghostModel == null)
             {
                 GameObject prefab = Resources.Load<GameObject>(_currentPrefabPath);
-                _ghostModel = Object.Instantiate(prefab);
-                _ghostModel.name = "GhostModel";
 
-                foreach (var renderer in _ghostModel.GetComponentsInChildren<MeshRenderer>())
+                _ghostModel = new GameObject("GhostModel");
+
+                foreach (var mf in prefab.GetComponentsInChildren<MeshFilter>(true))
                 {
-                    var materials = new Material[renderer.sharedMaterials.Length];
-                    for (int i = 0; i < materials.Length; i++)
-                        materials[i] = hoverMaterial;
-                    renderer.sharedMaterials = materials;
+                    var src = mf.transform;
+                    var srcRenderer = mf.GetComponent<MeshRenderer>();
+                    if (srcRenderer == null) continue;
+
+                    GameObject go = new GameObject(mf.name);
+                    go.transform.SetParent(_ghostModel.transform, false);
+
+                    go.transform.position = src.position;
+                    go.transform.rotation = src.rotation;
+                    go.transform.localScale = src.lossyScale;
+
+                    var newMF = go.AddComponent<MeshFilter>();
+                    newMF.sharedMesh = mf.sharedMesh;
+
+                    var newMR = go.AddComponent<MeshRenderer>();
+
+                    var mats = srcRenderer.sharedMaterials;
+                    var ghostMats = new Material[mats.Length];
+
+                    for (int i = 0; i < mats.Length; i++)
+                        ghostMats[i] = hoverMaterial;
+
+                    newMR.sharedMaterials = ghostMats;
+
+                    newMR.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    newMR.receiveShadows = false;
                 }
 
-                foreach (var component in _ghostModel.GetComponentsInChildren<Component>())
-                {
-                    if (component is Transform || component is MeshFilter || component is MeshRenderer)
-                        continue;
-
-                    Object.Destroy(component);
-                }
+                _ghostModel.transform.localScale = Vector3.one;
             }
 
             Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
