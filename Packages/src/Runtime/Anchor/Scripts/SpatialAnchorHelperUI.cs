@@ -61,7 +61,7 @@ namespace SAH
             }
         }
 
-        public void PlaceAndSaveAnchor(Transform transform)
+        public void PlaceSpatialAnchor(Transform transform, string prefabPath)
         {
             Vector3 position = transform.position;
             Quaternion rawRotation = transform.rotation;
@@ -70,7 +70,7 @@ namespace SAH
             euler.z = 0;
             Quaternion rotation = Quaternion.Euler(euler);
 
-            _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, _currentPrefabPath, _currentAnchorType);
+            _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, prefabPath, _currentAnchorType);
         }
 
         private void PlaceSetupObjectAtController()
@@ -115,7 +115,12 @@ namespace SAH
             _pendingSpatialAnchors.Add(setupGameObject);
 
             SetupObject setupObject = setupGameObject.GetComponent<SetupObject>();
-            setupObject.SetGhostModel(_ghostModel);
+            
+            GameObject ghostCopy = Instantiate(_ghostModel);
+            Destroy(_ghostModel);
+
+            setupObject.prefabPath =_currentPrefabPath;
+            setupObject.SetGhostModel(ghostCopy);
             setupObject.SetPositionAndRotation(position, rotation);
             setupObject.SetSpatialAnchorHelperUI(this);
             setupObject.OnConfirmed += OnConfirmedSetupObject;
@@ -124,7 +129,7 @@ namespace SAH
 
         private void OnConfirmedSetupObject(SetupObject setupObject)
         {
-            PlaceAndSaveAnchor(setupObject.transform);
+            PlaceSpatialAnchor(setupObject.transform, setupObject.prefabPath);
             RemovePendingSpatialAnchor(setupObject.gameObject);
         }
 
@@ -157,47 +162,6 @@ namespace SAH
             _pendingSpatialAnchors.Clear();
         }
 
-        private void PlaceSpatialAnchorAtController()
-        {
-            Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-
-            if (true)
-            {
-                RaycastHit hit;
-                float rayDistance = 2f;
-                bool foundHit = false;
-                Vector3 hitPoint = position;
-
-                if (Physics.Raycast(position, Vector3.down, out hit, rayDistance))
-                {
-                    hitPoint = hit.point;
-                    foundHit = true;
-                }
-                else if (Physics.Raycast(position, Vector3.up, out hit, rayDistance))
-                {
-                    hitPoint = hit.point;
-                    foundHit = true;
-                }
-
-                if (foundHit)
-                {
-                    position = hitPoint;
-                }
-                else
-                {
-                    Debug.LogWarning("No surface found to snap anchor to.");
-                }
-            }
-
-            Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-            Vector3 euler = rawRotation.eulerAngles;
-            euler.x = 0;
-            euler.z = 0;
-            Quaternion rotation = Quaternion.Euler(euler);
-
-            _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, _currentPrefabPath, _currentAnchorType);
-
-        }
         private void SetupAndUpdateGhostModel()
         {
             if (_ghostModel == null)

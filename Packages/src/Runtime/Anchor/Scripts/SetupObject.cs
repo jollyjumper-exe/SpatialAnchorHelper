@@ -7,8 +7,11 @@ namespace SAH{
     {
         public Action<SetupObject> OnConfirmed;
 
+        public String prefabPath;
+
         [SerializeField] private Button _button;
         [SerializeField] private Gizmo _gizmo;
+        
         private GameObject _ghostModel;
 
         public void SetPositionAndRotation(Vector3 position, Quaternion rotation)
@@ -55,6 +58,12 @@ namespace SAH{
                     OnConfirmed?.Invoke(this);
                 });
             }
+        }
+
+        void OnDestroy()
+        {
+            if(_ghostModel != null) 
+                Destroy(_ghostModel);
         }
     }
 }
