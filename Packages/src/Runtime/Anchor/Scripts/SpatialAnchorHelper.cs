@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,13 @@ namespace SAH
     public class SpatialAnchorHelper : MonoBehaviour
     {
         public static SpatialAnchorHelper Instance { get; private set; }
+
+        public static Action OnSaving;
+        public static Action OnLoading;
+        public static Action OnCreating;
+        public static Action OnClearingScene;
+        public static Action OnClearingRoomCache;
+        public static Action OnClearingAllCaches;
 
         [SerializeField] private string _persistentDataLocation = "anchors";
 
@@ -48,6 +56,8 @@ namespace SAH
         {
             if (_roomID == null) return;
             SpatialAnchorUtils.SaveSpatialAnchors(_anchors, _roomID, layoutID, _persistentDataLocation);
+
+            OnSaving?.Invoke();
         }
 
         public async void LoadSpatialAnchors(string layoutID)
@@ -56,6 +66,8 @@ namespace SAH
             ClearSpatialAnchors();
             _anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
             if (_anchors == null) _anchors = new List<Anchor>();
+
+            OnLoading?.Invoke();
         }
 
         public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type)
@@ -77,22 +89,30 @@ namespace SAH
             };
 
             _anchors.Add(anchor);
+
+            OnCreating?.Invoke();
         }
 
         public void ClearSpatialAnchors()
         {
             SpatialAnchorUtils.ClearSpatialAnchors();
             _anchors.Clear();
+
+            OnClearingScene?.Invoke();
         }
 
         public void ClearRoomCache()
         {
             SpatialAnchorUtils.ClearRoomCache(_roomID, _persistentDataLocation);
+
+            OnClearingRoomCache?.Invoke();
         }
 
         public void ClearAllCaches()
         {
             SpatialAnchorUtils.ClearAllCaches(_persistentDataLocation);
+
+            OnClearingAllCaches?.Invoke();
         }
 
         private IEnumerator FetchRoomIdCoroutine()
