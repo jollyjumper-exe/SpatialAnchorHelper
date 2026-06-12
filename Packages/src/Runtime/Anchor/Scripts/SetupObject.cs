@@ -1,10 +1,12 @@
-using SAH;
+using System;
 using UnityEngine;
 using UnityEngine.UI; 
 
 namespace SAH{
     public class SetupObject : MonoBehaviour
     {
+        public Action<SetupObject> OnConfirmed;
+
         [SerializeField] private Button _button;
         [SerializeField] private Gizmo _gizmo;
         private GameObject _ghostModel;
@@ -50,8 +52,7 @@ namespace SAH{
             {
                 _button.onClick.AddListener(() =>
                 {
-                    spatialAnchorHelperUI.PlaceAndSaveAnchor(transform);
-                    Destroy(gameObject);
+                    OnConfirmed?.Invoke(this);
                 });
             }
         }

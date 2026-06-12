@@ -17,10 +17,23 @@ namespace SAH
         private string _currentPrefabPath;
         private string _currentAnchorType;
         private GameObject _ghostModel;
+        private List<GameObject> _pendingSpatialAnchors = new List<GameObject>();
 
         void Start()
         {
-            if (SpatialAnchorHelper.Instance != null) _spatialAnchorHelper = SpatialAnchorHelper.Instance;
+            if(SpatialAnchorHelper.Instance != null) _spatialAnchorHelper = SpatialAnchorHelper.Instance;
+        }
+
+        void OnEnable()
+        {
+            SpatialAnchorHelper.OnClearingScene += RemoveAllPendingSpatialAnchors;
+        }
+
+        void OnDisable()
+        {
+            SpatialAnchorHelper.OnClearingScene -= RemoveAllPendingSpatialAnchors;
+            
+            RemoveAllPendingSpatialAnchors();
         }
 
         void Update()
@@ -98,11 +111,50 @@ namespace SAH
             euler.z = 0;
             Quaternion rotation = Quaternion.Euler(euler);
 
-            SetupObject setupObject = Instantiate(SetupObject, position, rotation).GetComponent<SetupObject>();
+            GameObject setupGameObject = Instantiate(SetupObject, position, rotation);
+            _pendingSpatialAnchors.Add(setupGameObject);
+
+            SetupObject setupObject = setupGameObject.GetComponent<SetupObject>();
             setupObject.SetGhostModel(_ghostModel);
             setupObject.SetPositionAndRotation(position, rotation);
             setupObject.SetSpatialAnchorHelperUI(this);
+            setupObject.OnConfirmed += OnConfirmedSetupObject;
 
+        }
+
+        private void OnConfirmedSetupObject(SetupObject setupObject)
+        {
+            PlaceAndSaveAnchor(setupObject.transform);
+            RemovePendingSpatialAnchor(setupObject.gameObject);
+        }
+
+        private void RemovePendingSpatialAnchor(GameObject objectToRemove)
+        {
+            if (objectToRemove == null)
+                return;
+
+            _pendingSpatialAnchors.Remove(objectToRemove);
+
+            SetupObject setupObject = objectToRemove.GetComponent<SetupObject>();
+            setupObject.OnConfirmed -= OnConfirmedSetupObject;
+
+            Destroy(objectToRemove);
+        }
+
+        private void RemoveAllPendingSpatialAnchors()
+        {
+            foreach (GameObject pending in _pendingSpatialAnchors)
+            {
+                if (pending != null)
+                {
+                    Destroy(pending);
+
+                    SetupObject setupObject = pending.GetComponent<SetupObject>();
+                    setupObject.OnConfirmed -= OnConfirmedSetupObject;
+                }
+            }
+
+            _pendingSpatialAnchors.Clear();
         }
 
         private void PlaceSpatialAnchorAtController()
