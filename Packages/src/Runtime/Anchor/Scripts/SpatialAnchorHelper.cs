@@ -70,13 +70,24 @@ namespace SAH
             OnLoading?.Invoke();
         }
 
-        public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type)
+        public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type=null)
         {
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
+
             if (prefab == null)
             {
                 Debug.LogError($"Prefab not found at Resources/{prefabPath}");
                 return;
+            }
+
+            if(type == null)
+            {
+                SpatialAnchorSpawnEmitter spawnEmitter = prefab.GetComponent<SpatialAnchorSpawnEmitter>();
+
+                if(spawnEmitter != null && spawnEmitter.optionalSpatialAnchorType != null)
+                {
+                    type = spawnEmitter.optionalSpatialAnchorType;
+                }
             }
 
             OVRSpatialAnchor OVRAnchor = SpatialAnchorUtils.PlaceSpatialAnchor(position, rotation, prefab);
