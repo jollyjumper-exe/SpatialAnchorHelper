@@ -126,6 +126,16 @@ namespace SAH
             OnClearingAllCaches?.Invoke();
         }
 
+        public Dictionary<string, List<AnchorSaveData>> LoadRoomCache()
+        {
+            return SpatialAnchorUtils.LoadRoomCache(_roomID, _persistentDataLocation);
+        }
+
+        public List<AnchorSaveData> LoadLayoutCache(string layoutID)
+        {
+            return SpatialAnchorUtils.LoadLayoutCache(_roomID, layoutID, _persistentDataLocation);
+        }
+
         private IEnumerator FetchRoomIdCoroutine()
         {
             while (_roomID == null)

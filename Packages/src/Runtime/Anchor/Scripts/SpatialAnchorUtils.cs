@@ -243,5 +243,47 @@ namespace SAH
                 Debug.LogError($"Failed to clear all caches: {ex.Message}");
             }
         }
+
+        public static Dictionary<string, List<AnchorSaveData>> LoadRoomCache(string roomId, string subfolder = "anchors")
+        {
+            string path = Path.Combine(Application.persistentDataPath, subfolder, roomId);
+
+            if (!File.Exists(path))
+            {
+                Debug.LogWarning($"Anchor file not found at {path}");
+                return null;
+            }
+
+            try
+            {
+                var allScenarios = JsonConvert.DeserializeObject<Dictionary<string, List<AnchorSaveData>>>(File.ReadAllText(path));
+                Debug.Log($"Loaded room cache '{roomId}' with {allScenarios?.Count ?? 0} scenarios.");
+                return allScenarios ?? new Dictionary<string, List<AnchorSaveData>>();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to parse anchor file at {path}: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static List<AnchorSaveData> LoadLayoutCache(string roomId, string scenarioId, string subfolder = "anchors")
+        {
+            var allScenarios = LoadRoomCache(roomId, subfolder);
+
+            if (allScenarios == null)
+            {
+                return null;
+            }
+
+            if (!allScenarios.TryGetValue(scenarioId, out var saveDataList))
+            {
+                Debug.LogWarning($"No layout found for scenario '{scenarioId}' in room '{roomId}'");
+                return null;
+            }
+
+            Debug.Log($"Loaded layout '{scenarioId}' for room '{roomId}' with {saveDataList.Count} anchors.");
+            return saveDataList;
+        }
     }
 }
