@@ -65,7 +65,7 @@ namespace SAH
         public async Task<List<Anchor>> LoadSpatialAnchors(string layoutID)
         {
             if (_roomID == null)
-                return;
+                return null;
 
             ClearSpatialAnchors();
 
