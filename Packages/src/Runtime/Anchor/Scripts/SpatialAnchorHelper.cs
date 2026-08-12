@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using UnityEngine;
 using Meta.XR.MRUtilityKit;
+using UnityEngine;
 
 namespace SAH
 {
@@ -19,9 +19,11 @@ namespace SAH
         public static Action OnClearingRoomCache;
         public static Action OnClearingAllCaches;
 
+        public List<Anchor> Anchors { get; private set; }
+
+
         [SerializeField] private string _persistentDataLocation = "anchors";
 
-        private List<Anchor> _anchors;
         private string _currentLayoutID = "Playground";
         private string _roomID;
 
@@ -48,29 +50,36 @@ namespace SAH
 
         void Start()
         {
-            _anchors = new List<Anchor>();
+            Anchors = new List<Anchor>();
             StartCoroutine(FetchRoomIdCoroutine());
         }
 
         public void SaveSpatialAnchors(string layoutID)
         {
             if (_roomID == null) return;
-            SpatialAnchorUtils.SaveSpatialAnchors(_anchors, _roomID, layoutID, _persistentDataLocation);
+            SpatialAnchorUtils.SaveSpatialAnchors(Anchors, _roomID, layoutID, _persistentDataLocation);
 
             OnSaving?.Invoke();
         }
 
-        public async void LoadSpatialAnchors(string layoutID)
+        public async Task<List<Anchor>> LoadSpatialAnchors(string layoutID)
         {
-            if (_roomID == null) return;
+            if (_roomID == null)
+                return;
+
             ClearSpatialAnchors();
-            _anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
-            if (_anchors == null) _anchors = new List<Anchor>();
+
+            Anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
+
+            if (Anchors == null)
+                Anchors = new List<Anchor>();
 
             OnLoading?.Invoke();
+
+            return Anchors;
         }
 
-        public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type=null)
+        public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type = null)
         {
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
 
@@ -80,11 +89,11 @@ namespace SAH
                 return;
             }
 
-            if(type == null)
+            if (type == null)
             {
                 SpatialAnchorSpawnEmitter spawnEmitter = prefab.GetComponent<SpatialAnchorSpawnEmitter>();
 
-                if(spawnEmitter != null && spawnEmitter.optionalSpatialAnchorType != null)
+                if (spawnEmitter != null && spawnEmitter.optionalSpatialAnchorType != null)
                 {
                     type = spawnEmitter.optionalSpatialAnchorType;
                 }
@@ -99,7 +108,7 @@ namespace SAH
                 type = type
             };
 
-            _anchors.Add(anchor);
+            Anchors.Add(anchor);
 
             OnCreating?.Invoke();
         }
@@ -107,7 +116,7 @@ namespace SAH
         public void ClearSpatialAnchors()
         {
             SpatialAnchorUtils.ClearSpatialAnchors();
-            _anchors.Clear();
+            Anchors.Clear();
 
             OnClearingScene?.Invoke();
         }
@@ -157,7 +166,7 @@ namespace SAH
 
         private void RemoveSpatialAnchor(SpatialAnchorSpawnEmitter emitter)
         {
-            int index = _anchors.FindIndex(a => a.anchor == emitter.spatialAnchor);
+            int index = Anchors.FindIndex(a => a.anchor == emitter.spatialAnchor);
 
             if (index == -1)
             {
@@ -165,7 +174,7 @@ namespace SAH
                 return;
             }
 
-            _anchors.RemoveAt(index);
+            Anchors.RemoveAt(index);
         }
     }
 }
