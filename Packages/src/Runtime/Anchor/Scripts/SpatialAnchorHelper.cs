@@ -18,14 +18,11 @@ namespace SAH
         public static Action OnClearingRoomCache;
         public static Action OnClearingAllCaches;
 
-        public List<SAHAnchor> Anchors { get; private set; }
+        public List<SAHAnchor> Anchors { get; private set; } = new List<SAHAnchor>();
 
 
         [SerializeField] private string _persistentDataLocation = "anchors";
-        [SerializeField]
-        private SpatialAnchorBackendType _backendType =
-            SpatialAnchorBackendType.Meta;
-        [SerializeField] private ARAnchorManager _arAnchorManager;
+        [SerializeField] private SpatialAnchorBackendType _backendType = SpatialAnchorBackendType.Meta;
 
         private ISpatialAnchorBackend _backend;
         private string _roomID;
@@ -39,9 +36,7 @@ namespace SAH
             }
 
             Instance = this;
-            _backend = SpatialAnchorBackendFactory.Create(
-                _backendType,
-                _arAnchorManager);
+            _backend = SpatialAnchorBackendFactory.Create(_backendType);
         }
 
         private void OnEnable()
@@ -56,7 +51,6 @@ namespace SAH
 
         void Start()
         {
-            Anchors = new List<SAHAnchor>();
             StartCoroutine(
                 _backend.FetchRoomIdCoroutine(HandleRoomIdFound));
         }

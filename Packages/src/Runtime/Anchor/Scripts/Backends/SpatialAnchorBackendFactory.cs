@@ -12,8 +12,7 @@ namespace SAH
     public static class SpatialAnchorBackendFactory
     {
         public static ISpatialAnchorBackend Create(
-            SpatialAnchorBackendType backendType,
-            ARAnchorManager arAnchorManager)
+            SpatialAnchorBackendType backendType)
         {
             switch (backendType)
             {
@@ -21,13 +20,7 @@ namespace SAH
                     return new MetaSpatialAnchorBackend();
 
                 case SpatialAnchorBackendType.ARFoundation:
-                    if (arAnchorManager == null)
-                    {
-                        throw new InvalidOperationException(
-                            "The AR Foundation backend requires an ARAnchorManager.");
-                    }
-
-                    return new ARFoundationSpatialAnchorBackend(arAnchorManager);
+                    return new ARFoundationSpatialAnchorBackend();
 
                 default:
                     throw new ArgumentOutOfRangeException(

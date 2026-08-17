@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI; 
+using UnityEngine.UI;
 
-namespace SAH{
+namespace SAH
+{
     public class SetupObject : MonoBehaviour
     {
         public Action<SetupObject> OnConfirmed;
@@ -11,8 +12,19 @@ namespace SAH{
 
         [SerializeField] private Button _button;
         [SerializeField] private Gizmo _gizmo;
-        
+
         private GameObject _ghostModel;
+
+        public void Start()
+        {
+            if (_button != null)
+            {
+                _button.onClick.AddListener(() =>
+                {
+                    OnConfirmed?.Invoke(this);
+                });
+            }
+        }
 
         public void SetPositionAndRotation(Vector3 position, Quaternion rotation)
         {
@@ -33,7 +45,8 @@ namespace SAH{
 
             if (renderers.Length == 0) bounds = new Bounds(_ghostModel.transform.position, Vector3.zero);
 
-            else{
+            else
+            {
                 for (int i = 1; i < renderers.Length; i++)
                 {
                     bounds.Encapsulate(renderers[i].bounds);
@@ -41,7 +54,7 @@ namespace SAH{
             }
 
             Vector3 pos = bounds.center;
-            pos.y += bounds.size.y/2;
+            pos.y += bounds.size.y / 2;
 
             _button.GetComponentInParent<Canvas>().transform.position = pos;
 
@@ -49,20 +62,9 @@ namespace SAH{
 
         }
 
-        public void SetSpatialAnchorHelperUI(SpatialAnchorHelperUI spatialAnchorHelperUI)
-        {
-            if (_button != null)
-            {
-                _button.onClick.AddListener(() =>
-                {
-                    OnConfirmed?.Invoke(this);
-                });
-            }
-        }
-
         void OnDestroy()
         {
-            if(_ghostModel != null) 
+            if (_ghostModel != null)
                 Destroy(_ghostModel);
         }
     }

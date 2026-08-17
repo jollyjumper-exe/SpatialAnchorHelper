@@ -1539,7 +1539,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330.75, y: -255}
+  m_AnchoredPosition: {x: 571.75, y: -255}
   m_SizeDelta: {x: 410, y: 210}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7201882492435884347
@@ -1771,6 +1771,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3646146930877834815}
   - component: {fileID: 7553656328152693838}
+  - component: {fileID: 7198915763917027840}
   m_Layer: 0
   m_Name: SpatialAnchorsHelper
   m_TagString: Untagged
@@ -1809,6 +1810,19 @@ MonoBehaviour:
   hoverMaterial: {fileID: 2100000, guid: 2382368b7b1c90843b16d9b83ff17d0f, type: 2}
   SetupObject: {fileID: 7406647740922620686, guid: c47ebc059410dce48a8ec29d59c98079,
     type: 3}
+  inputProvider: {fileID: 7198915763917027840}
+--- !u!114 &7198915763917027840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6550342727055986755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b363579cde1babd47b2ace0cdec24555, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SpatialAnchorHelper::SAH.MetaPlacementInput
 --- !u!1 &8119457917535149799
 GameObject:
   m_ObjectHideFlags: 0

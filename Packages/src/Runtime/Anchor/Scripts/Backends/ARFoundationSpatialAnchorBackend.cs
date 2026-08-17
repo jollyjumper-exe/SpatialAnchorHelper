@@ -17,13 +17,6 @@ namespace SAH
         private readonly ARAnchorManager _anchorManager;
         private readonly List<ARAnchor> _activeAnchors = new List<ARAnchor>();
 
-        public ARFoundationSpatialAnchorBackend(ARAnchorManager anchorManager)
-        {
-            _anchorManager = anchorManager != null
-                ? anchorManager
-                : throw new ArgumentNullException(nameof(anchorManager));
-        }
-
         public IEnumerator FetchRoomIdCoroutine(Action<string> onRoomIdFound)
         {
             // AR Foundation has no provider-independent room identifier.

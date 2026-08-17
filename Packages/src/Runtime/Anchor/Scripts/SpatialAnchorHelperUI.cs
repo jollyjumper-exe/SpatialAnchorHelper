@@ -1,9 +1,9 @@
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
-using Oculus.Interaction.Input;
-using UnityEditor;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace SAH
 {
@@ -11,6 +11,10 @@ namespace SAH
     {
         [SerializeField] Material hoverMaterial;
         [SerializeField] GameObject SetupObject;
+        [SerializeField] private MonoBehaviour inputProvider;
+
+        private ISpatialAnchorPlacementInput Input =>
+            inputProvider as ISpatialAnchorPlacementInput;
 
         private bool _isPlacing = false;
         private bool _wasPinchingLastFrame = false;
@@ -21,7 +25,7 @@ namespace SAH
 
         void Start()
         {
-            if(SpatialAnchorHelper.Instance != null) _spatialAnchorHelper = SpatialAnchorHelper.Instance;
+            if (SpatialAnchorHelper.Instance != null) _spatialAnchorHelper = SpatialAnchorHelper.Instance;
         }
 
         void OnEnable()
@@ -32,22 +36,25 @@ namespace SAH
         void OnDisable()
         {
             SpatialAnchorHelper.OnClearingScene -= RemoveAllPendingSpatialAnchors;
-            
+
             RemoveAllPendingSpatialAnchors();
         }
 
         void Update()
         {
 
-            if (_isPlacing)
+            if (!_isPlacing)
+                return;
+
+            if (!Input.TryGetPose(out Pose pose))
+                return;
+
+            SetupAndUpdateGhostModel();
+
+            if (Input.WasConfirmedThisFrame())
             {
-                SetupAndUpdateGhostModel();
-                bool isPinching = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.Hands);
-                if (isPinching)
-                {
-                    PlaceSetupObjectAtController();
-                    _isPlacing = false;
-                }
+                PlaceSetupObject(pose);
+                _isPlacing = false;
             }
         }
 
@@ -71,9 +78,9 @@ namespace SAH
             _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, prefabPath, _currentAnchorType);
         }
 
-        private void PlaceSetupObjectAtController()
+        private void PlaceSetupObject(Pose pose)
         {
-            Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            Vector3 position = pose.position;
 
             if (true)
             {
@@ -103,8 +110,7 @@ namespace SAH
                 }
             }
 
-            Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-            Vector3 euler = rawRotation.eulerAngles;
+            Vector3 euler = pose.rotation.eulerAngles;
             euler.x = 0;
             euler.z = 0;
             Quaternion rotation = Quaternion.Euler(euler);
@@ -113,14 +119,13 @@ namespace SAH
             _pendingSpatialAnchors.Add(setupGameObject);
 
             SetupObject setupObject = setupGameObject.GetComponent<SetupObject>();
-            
+
             GameObject ghostCopy = Instantiate(_ghostModel);
             Destroy(_ghostModel);
 
-            setupObject.prefabPath =_currentPrefabPath;
+            setupObject.prefabPath = _currentPrefabPath;
             setupObject.SetGhostModel(ghostCopy);
             setupObject.SetPositionAndRotation(position, rotation);
-            setupObject.SetSpatialAnchorHelperUI(this);
             setupObject.OnConfirmed += OnConfirmedSetupObject;
 
         }
@@ -230,7 +235,7 @@ namespace SAH
                     Debug.LogWarning("No surface found to snap anchor to.");
                 }
             }
-            
+
             Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
             Vector3 euler = rawRotation.eulerAngles;
             euler.x = 0;
