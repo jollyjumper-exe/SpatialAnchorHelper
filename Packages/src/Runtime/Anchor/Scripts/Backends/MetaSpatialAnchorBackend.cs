@@ -1,35 +1,35 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Meta.XR.MRUtilityKit;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace SAH
 {
-    [System.Serializable]
-    public struct AnchorSaveData
+    public sealed class MetaSpatialAnchorBackend : ISpatialAnchorBackend
     {
-        public string anchorId;
-        public string prefabPath;
-        public string type;
-    }
+        public IEnumerator FetchRoomIdCoroutine(
+            Action<string> onRoomIdFound)
+        {
+            while (true)
+            {
+                var room = MRUK.Instance?.GetCurrentRoom();
 
-    [System.Serializable]
-    public class AnchorSaveDataList
-    {
-        public List<AnchorSaveData> anchors;
-    }
-    public struct Anchor
-    {
-        public OVRSpatialAnchor anchor;
-        public string prefabPath;
-        public string type;
-    }
+                if (room != null)
+                {
+                    string roomId = room.Anchor.Uuid.ToString();
+                    onRoomIdFound?.Invoke(roomId);
+                    yield break;
+                }
 
-    public static class SpatialAnchorUtils
-    {
-        public static OVRSpatialAnchor PlaceSpatialAnchor(Vector3 position, Quaternion rotation, GameObject prefab)
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        public Task<SAHAnchor> PlaceSpatialAnchor(Vector3 position, Quaternion rotation, GameObject prefab)
         {
             GameObject parent = GameObject.Find("SpatialAnchors");
             if (parent == null)
@@ -39,12 +39,17 @@ namespace SAH
 
             GameObject instance = UnityEngine.Object.Instantiate(prefab, position, rotation, parent.transform);
 
-            OVRSpatialAnchor anchor = instance.AddComponent<OVRSpatialAnchor>();
+            OVRSpatialAnchor nativeAnchor = instance.AddComponent<OVRSpatialAnchor>();
 
-            return anchor;
+            return Task.FromResult(new SAHAnchor
+            {
+                Id = nativeAnchor.Uuid.ToString(),
+                Content = instance,
+                NativeHandle = nativeAnchor
+            });
         }
 
-        public static void ClearSpatialAnchors()
+        public void ClearSpatialAnchors()
         {
             GameObject parent = GameObject.Find("SpatialAnchors");
             if (parent == null)
@@ -62,7 +67,7 @@ namespace SAH
             Debug.Log("Cleared all spatial anchors.");
         }
 
-        public static async void SaveSpatialAnchors(List<Anchor> anchors, string roomId, string scenarioId, string subfolder = "anchors")
+        public async Task SaveSpatialAnchors(List<SAHAnchor> anchors, string roomId, string scenarioId, string subfolder = "anchors")
         {
             // Construct the directory and file paths
             string folderPath = Path.Combine(Application.persistentDataPath, subfolder);
@@ -76,25 +81,36 @@ namespace SAH
             }
 
             // Load existing JSON or create empty dictionary
-            Dictionary<string, List<AnchorSaveData>> allScenarios = File.Exists(path)
-                ? JsonConvert.DeserializeObject<Dictionary<string, List<AnchorSaveData>>>(File.ReadAllText(path))
-                : new Dictionary<string, List<AnchorSaveData>>();
+            Dictionary<string, List<SAHAnchorSaveData>> allScenarios = File.Exists(path)
+                ? JsonConvert.DeserializeObject<Dictionary<string, List<SAHAnchorSaveData>>>(File.ReadAllText(path))
+                : new Dictionary<string, List<SAHAnchorSaveData>>();
 
-            List<AnchorSaveData> saveDataList = new List<AnchorSaveData>();
+            List<SAHAnchorSaveData> saveDataList = new List<SAHAnchorSaveData>();
 
-            foreach (var pair in anchors)
+            foreach (SAHAnchor anchor in anchors)
             {
-                var result = await pair.anchor.SaveAsync();
+                if (!(anchor.NativeHandle is OVRSpatialAnchor nativeAnchor))
+                {
+                    Debug.LogWarning($"Anchor '{anchor.Id}' is not backed by an OVRSpatialAnchor.");
+                    continue;
+                }
+
+                var result = await nativeAnchor.SaveAsync();
                 if (result)
                 {
-                    saveDataList.Add(new AnchorSaveData
+                    anchor.Id = nativeAnchor.Uuid.ToString();
+                    saveDataList.Add(new SAHAnchorSaveData
                     {
-                        anchorId = pair.anchor.Uuid.ToString(),
-                        prefabPath = pair.prefabPath,
-                        type = pair.type
+                        anchorId = anchor.Id,
+                        prefabPath = anchor.PrefabPath,
+                        type = anchor.Type,
+                        scale = ToSAHVector3(
+                            anchor.Content != null
+                                ? anchor.Content.transform.localScale
+                                : Vector3.one)
                     });
 
-                    Debug.Log($"Anchor {pair.anchor.Uuid} saved successfully.");
+                    Debug.Log($"Anchor {nativeAnchor.Uuid} saved successfully.");
                 }
                 else
                 {
@@ -109,7 +125,7 @@ namespace SAH
             Debug.Log($"Saved {saveDataList.Count} anchors for scenario '{scenarioId}' to {path}");
         }
 
-        public static async Task<List<Anchor>> LoadSpatialAnchors(string roomId, string scenarioId, string subfolder = "anchors")
+        public async Task<List<SAHAnchor>> LoadSpatialAnchors(string roomId, string scenarioId, string subfolder = "anchors")
         {
             string path = Path.Combine(Application.persistentDataPath, subfolder, roomId);
             if (!File.Exists(path))
@@ -118,8 +134,8 @@ namespace SAH
                 return null;
             }
 
-            Dictionary<string, List<AnchorSaveData>> allScenarios =
-                JsonConvert.DeserializeObject<Dictionary<string, List<AnchorSaveData>>>(File.ReadAllText(path));
+            Dictionary<string, List<SAHAnchorSaveData>> allScenarios =
+                JsonConvert.DeserializeObject<Dictionary<string, List<SAHAnchorSaveData>>>(File.ReadAllText(path));
 
             if (!allScenarios.TryGetValue(scenarioId, out var saveDataList))
             {
@@ -128,7 +144,7 @@ namespace SAH
             }
 
             List<Guid> anchorIds = new List<Guid>();
-            Dictionary<Guid, AnchorSaveData> idToData = new Dictionary<Guid, AnchorSaveData>();
+            Dictionary<Guid, SAHAnchorSaveData> idToData = new Dictionary<Guid, SAHAnchorSaveData>();
 
             foreach (var data in saveDataList)
             {
@@ -152,7 +168,7 @@ namespace SAH
                 return null;
             }
 
-            List<Anchor> anchors = new List<Anchor>();
+            List<SAHAnchor> anchors = new List<SAHAnchor>();
 
             foreach (var unbound in unboundAnchors)
             {
@@ -163,7 +179,7 @@ namespace SAH
                     continue;
                 }
 
-                if (!idToData.TryGetValue(unbound.Uuid, out var anchorData))
+                if (!idToData.TryGetValue(unbound.Uuid, out SAHAnchorSaveData anchorData))
                 {
                     Debug.LogWarning($"No prefab path found for anchor {unbound.Uuid}");
                     continue;
@@ -179,15 +195,25 @@ namespace SAH
                 GameObject parent = GameObject.Find("SpatialAnchors") ?? new GameObject("SpatialAnchors");
                 Pose pose = unbound.Pose;
                 GameObject spawned = UnityEngine.Object.Instantiate(prefab, pose.position, pose.rotation, parent.transform);
+
+                // Older cache entries have no scale field. In that case, retain
+                // the scale configured on the prefab.
+                if (anchorData.scale.HasValue)
+                {
+                    spawned.transform.localScale = ToUnityVector3(anchorData.scale.Value);
+                }
+
                 var boundAnchor = spawned.AddComponent<OVRSpatialAnchor>();
                 unbound.BindTo(boundAnchor);
 
-                Anchor anchor = new Anchor();
-                anchor.anchor = boundAnchor;
-                anchor.prefabPath = anchorData.prefabPath;
-                anchor.type = anchorData.type;
-
-                anchors.Add(anchor);
+                anchors.Add(new SAHAnchor
+                {
+                    Id = unbound.Uuid.ToString(),
+                    PrefabPath = anchorData.prefabPath,
+                    Type = anchorData.type,
+                    Content = spawned,
+                    NativeHandle = boundAnchor
+                });
 
                 Debug.Log($"Loaded and placed prefab for anchor {unbound.Uuid}");
             }
@@ -195,7 +221,22 @@ namespace SAH
             return anchors;
         }
 
-        public static void ClearRoomCache(string roomId, string subfolder = "anchors")
+        private static SAHVector3 ToSAHVector3(Vector3 value)
+        {
+            return new SAHVector3
+            {
+                x = value.x,
+                y = value.y,
+                z = value.z
+            };
+        }
+
+        private static Vector3 ToUnityVector3(SAHVector3 value)
+        {
+            return new Vector3(value.x, value.y, value.z);
+        }
+
+        public void ClearRoomCache(string roomId, string subfolder = "anchors")
         {
             string path = Path.Combine(Application.persistentDataPath, subfolder, roomId);
 
@@ -217,7 +258,7 @@ namespace SAH
             }
         }
 
-        public static void ClearAllCaches(string subfolder = "anchors")
+        public void ClearAllCaches(string subfolder = "anchors")
         {
             string folderPath = Path.Combine(Application.persistentDataPath, subfolder);
 
@@ -244,7 +285,7 @@ namespace SAH
             }
         }
 
-        public static Dictionary<string, List<AnchorSaveData>> LoadRoomCache(string roomId, string subfolder = "anchors")
+        public Dictionary<string, List<SAHAnchorSaveData>> LoadRoomCache(string roomId, string subfolder = "anchors")
         {
             string path = Path.Combine(Application.persistentDataPath, subfolder, roomId);
 
@@ -256,9 +297,9 @@ namespace SAH
 
             try
             {
-                var allScenarios = JsonConvert.DeserializeObject<Dictionary<string, List<AnchorSaveData>>>(File.ReadAllText(path));
+                var allScenarios = JsonConvert.DeserializeObject<Dictionary<string, List<SAHAnchorSaveData>>>(File.ReadAllText(path));
                 Debug.Log($"Loaded room cache '{roomId}' with {allScenarios?.Count ?? 0} scenarios.");
-                return allScenarios ?? new Dictionary<string, List<AnchorSaveData>>();
+                return allScenarios ?? new Dictionary<string, List<SAHAnchorSaveData>>();
             }
             catch (Exception ex)
             {
@@ -267,7 +308,7 @@ namespace SAH
             }
         }
 
-        public static List<AnchorSaveData> LoadLayoutCache(string roomId, string scenarioId, string subfolder = "anchors")
+        public List<SAHAnchorSaveData> LoadLayoutCache(string roomId, string scenarioId, string subfolder = "anchors")
         {
             var allScenarios = LoadRoomCache(roomId, subfolder);
 

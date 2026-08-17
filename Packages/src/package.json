@@ -1,4 +1,4 @@
- {
+{
   "name": "com.fh-kiel.spatial-anchor-helper",
   "displayName": "Spatial Anchor Helper",
   "version": "1.0.0",
@@ -10,6 +10,10 @@
     "url": "https://gitlab.iue.fh-kiel.de/dlc-see-digital-industrial-metaverse/dlc-see-xrui.git?path=Packages/src"
   },
   "dependencies": {
-    "com.meta.xr.sdk.all" : "78.0.0"
+    "com.meta.xr.sdk.core": "78.0.0",
+    "com.meta.xr.mrutilitykit": "78.0.0",
+    "com.meta.xr.sdk.interaction": "78.0.0",
+    "com.meta.xr.sdk.interaction.ovr": "78.0.0",
+    "com.unity.xr.arfoundation": "6.4.0"
   }
 }

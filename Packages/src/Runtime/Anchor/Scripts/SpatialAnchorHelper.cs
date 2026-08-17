@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using Meta.XR.MRUtilityKit;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 namespace SAH
 {
@@ -12,6 +10,7 @@ namespace SAH
     {
         public static SpatialAnchorHelper Instance { get; private set; }
 
+        public static Action OnRoomIdFound;
         public static Action OnSaving;
         public static Action OnLoading;
         public static Action OnCreating;
@@ -19,12 +18,16 @@ namespace SAH
         public static Action OnClearingRoomCache;
         public static Action OnClearingAllCaches;
 
-        public List<Anchor> Anchors { get; private set; }
+        public List<SAHAnchor> Anchors { get; private set; }
 
 
         [SerializeField] private string _persistentDataLocation = "anchors";
+        [SerializeField]
+        private SpatialAnchorBackendType _backendType =
+            SpatialAnchorBackendType.Meta;
+        [SerializeField] private ARAnchorManager _arAnchorManager;
 
-        private string _currentLayoutID = "Playground";
+        private ISpatialAnchorBackend _backend;
         private string _roomID;
 
         private void Awake()
@@ -36,6 +39,9 @@ namespace SAH
             }
 
             Instance = this;
+            _backend = SpatialAnchorBackendFactory.Create(
+                _backendType,
+                _arAnchorManager);
         }
 
         private void OnEnable()
@@ -50,36 +56,46 @@ namespace SAH
 
         void Start()
         {
-            Anchors = new List<Anchor>();
-            StartCoroutine(FetchRoomIdCoroutine());
+            Anchors = new List<SAHAnchor>();
+            StartCoroutine(
+                _backend.FetchRoomIdCoroutine(HandleRoomIdFound));
         }
 
-        public void SaveSpatialAnchors(string layoutID)
+        private void HandleRoomIdFound(string roomId)
+        {
+            _roomID = roomId;
+
+            Debug.Log($"Found Room {_roomID}");
+
+            OnRoomIdFound?.Invoke();
+        }
+
+        public async void SaveSpatialAnchors(string layoutID)
         {
             if (_roomID == null) return;
-            SpatialAnchorUtils.SaveSpatialAnchors(Anchors, _roomID, layoutID, _persistentDataLocation);
+            await _backend.SaveSpatialAnchors(Anchors, _roomID, layoutID, _persistentDataLocation);
 
             OnSaving?.Invoke();
         }
 
-        public async Task<List<Anchor>> LoadSpatialAnchors(string layoutID)
+        public async Task<List<SAHAnchor>> LoadSpatialAnchors(string layoutID)
         {
             if (_roomID == null)
                 return null;
 
             ClearSpatialAnchors();
 
-            Anchors = await SpatialAnchorUtils.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
+            Anchors = await _backend.LoadSpatialAnchors(_roomID, layoutID, _persistentDataLocation);
 
             if (Anchors == null)
-                Anchors = new List<Anchor>();
+                Anchors = new List<SAHAnchor>();
 
             OnLoading?.Invoke();
 
             return Anchors;
         }
 
-        public void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type = null)
+        public async void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type = null)
         {
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
 
@@ -99,14 +115,14 @@ namespace SAH
                 }
             }
 
-            OVRSpatialAnchor OVRAnchor = SpatialAnchorUtils.PlaceSpatialAnchor(position, rotation, prefab);
-
-            Anchor anchor = new Anchor
+            SAHAnchor anchor = await _backend.PlaceSpatialAnchor(position, rotation, prefab);
+            if (anchor == null)
             {
-                anchor = OVRAnchor,
-                prefabPath = prefabPath,
-                type = type
-            };
+                return;
+            }
+
+            anchor.PrefabPath = prefabPath;
+            anchor.Type = type;
 
             Anchors.Add(anchor);
 
@@ -115,7 +131,7 @@ namespace SAH
 
         public void ClearSpatialAnchors()
         {
-            SpatialAnchorUtils.ClearSpatialAnchors();
+            _backend.ClearSpatialAnchors();
             Anchors.Clear();
 
             OnClearingScene?.Invoke();
@@ -123,50 +139,31 @@ namespace SAH
 
         public void ClearRoomCache()
         {
-            SpatialAnchorUtils.ClearRoomCache(_roomID, _persistentDataLocation);
+            _backend.ClearRoomCache(_roomID, _persistentDataLocation);
 
             OnClearingRoomCache?.Invoke();
         }
 
         public void ClearAllCaches()
         {
-            SpatialAnchorUtils.ClearAllCaches(_persistentDataLocation);
+            _backend.ClearAllCaches(_persistentDataLocation);
 
             OnClearingAllCaches?.Invoke();
         }
 
-        public Dictionary<string, List<AnchorSaveData>> LoadRoomCache()
+        public Dictionary<string, List<SAHAnchorSaveData>> LoadRoomCache()
         {
-            return SpatialAnchorUtils.LoadRoomCache(_roomID, _persistentDataLocation);
+            return _backend.LoadRoomCache(_roomID, _persistentDataLocation);
         }
 
-        public List<AnchorSaveData> LoadLayoutCache(string layoutID)
+        public List<SAHAnchorSaveData> LoadLayoutCache(string layoutID)
         {
-            return SpatialAnchorUtils.LoadLayoutCache(_roomID, layoutID, _persistentDataLocation);
-        }
-
-        private IEnumerator FetchRoomIdCoroutine()
-        {
-            while (_roomID == null)
-            {
-                if (MRUK.Instance != null && MRUK.Instance.GetCurrentRoom() != null)
-                {
-                    _roomID = MRUK.Instance.GetCurrentRoom().Anchor.Uuid.ToString();
-                    Debug.Log($"Found Room {_roomID}");
-                    yield break;
-                }
-                else
-                {
-                    Debug.Log("No room found...");
-                }
-
-                yield return new WaitForSeconds(0.1f); // Wait 100ms before trying again
-            }
+            return _backend.LoadLayoutCache(_roomID, layoutID, _persistentDataLocation);
         }
 
         private void RemoveSpatialAnchor(SpatialAnchorSpawnEmitter emitter)
         {
-            int index = Anchors.FindIndex(a => a.anchor == emitter.spatialAnchor);
+            int index = Anchors.FindIndex(a => a.Content == emitter.gameObject);
 
             if (index == -1)
             {

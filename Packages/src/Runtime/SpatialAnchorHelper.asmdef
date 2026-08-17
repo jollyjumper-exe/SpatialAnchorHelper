@@ -2,10 +2,12 @@
     "name": "SpatialAnchorHelper",
     "rootNamespace": "",
     "references": [
-	"Unity.TextMeshPro",
-	"meta.xr.mrutilitykit",
+        "Unity.TextMeshPro",
+        "meta.xr.mrutilitykit",
         "Oculus.VR",
-        "Oculus.Interaction"
+        "Oculus.Interaction",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.ARSubsystems"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

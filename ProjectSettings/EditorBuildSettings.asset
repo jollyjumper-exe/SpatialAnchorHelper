@@ -9,6 +9,8 @@ EditorBuildSettings:
     path: Packages/com.fh-kiel.spatial-anchor-helper/Runtime/Anchor/Sample/SampleScene.unity
     guid: 7bd99bec630346746b178c3229787d8a
   m_configObjects:
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 3dff027670e94a6409233d5d43cc749b,
+      type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: b13386e4a3a894b4d880dc88dc33ce4d,
       type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 9e7b545b89baad8409bf9887b9c3d8fc,

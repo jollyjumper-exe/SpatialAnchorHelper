@@ -40,7 +40,7 @@ namespace SAH
 
         private void UpdateSummary()
         {
-            List<AnchorSaveData> savedAnchors = null;
+            List<SAHAnchorSaveData> savedAnchors = null;
 
             if(SpatialAnchorHelper.Instance != null) 
                 savedAnchors = SpatialAnchorHelper.Instance.LoadLayoutCache(_spatialAnchorHelperFunctionsWrapper.layoutID);
@@ -48,7 +48,7 @@ namespace SAH
             if(savedAnchors != null)
             {
                 string summary = "";
-                foreach(AnchorSaveData anchor in savedAnchors)
+                foreach(SAHAnchorSaveData anchor in savedAnchors)
                 {
                     string entry = $"\n{anchor.anchorId}, {anchor.type}";
                     summary += entry;
