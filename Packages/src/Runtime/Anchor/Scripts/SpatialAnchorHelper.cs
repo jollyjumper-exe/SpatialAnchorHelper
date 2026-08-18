@@ -89,7 +89,7 @@ namespace SAH
             return Anchors;
         }
 
-        public async void CreateSpatialAnchor(Vector3 position, Quaternion rotation, string prefabPath, string type = null)
+        public async void CreateSpatialAnchor(Vector3 position, Quaternion rotation, Vector3 scale, string prefabPath, string type = null)
         {
             GameObject prefab = Resources.Load<GameObject>(prefabPath);
 
@@ -109,7 +109,7 @@ namespace SAH
                 }
             }
 
-            SAHAnchor anchor = await _backend.PlaceSpatialAnchor(position, rotation, prefab);
+            SAHAnchor anchor = await _backend.PlaceSpatialAnchor(position, rotation, scale, prefab);
             if (anchor == null)
             {
                 return;

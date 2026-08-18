@@ -49,7 +49,7 @@ namespace SAH
             if (!Input.TryGetPose(out Pose pose))
                 return;
 
-            SetupAndUpdateGhostModel();
+            SetupAndUpdateGhostModel(pose);
 
             if (Input.WasConfirmedThisFrame())
             {
@@ -74,8 +74,10 @@ namespace SAH
             Quaternion rawRotation = transform.rotation;
             Vector3 euler = rawRotation.eulerAngles;
             Quaternion rotation = Quaternion.Euler(euler);
+            Vector3 scale = transform.localScale;
 
-            _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, prefabPath, _currentAnchorType);
+
+            _spatialAnchorHelper.CreateSpatialAnchor(position, rotation, scale, prefabPath, _currentAnchorType);
         }
 
         private void PlaceSetupObject(Pose pose)
@@ -128,6 +130,9 @@ namespace SAH
             setupObject.SetPositionAndRotation(position, rotation);
             setupObject.OnConfirmed += OnConfirmedSetupObject;
 
+            _currentPrefabPath = null;
+            _isPlacing = false;
+
         }
 
         private void OnConfirmedSetupObject(SetupObject setupObject)
@@ -165,7 +170,7 @@ namespace SAH
             _pendingSpatialAnchors.Clear();
         }
 
-        private void SetupAndUpdateGhostModel()
+        private void SetupAndUpdateGhostModel(Pose pose)
         {
             if (_ghostModel == null)
             {
@@ -206,7 +211,7 @@ namespace SAH
                 _ghostModel.transform.localScale = Vector3.one;
             }
 
-            Vector3 position = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            Vector3 position = pose.position;
 
             if (true)
             {
@@ -236,8 +241,7 @@ namespace SAH
                 }
             }
 
-            Quaternion rawRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-            Vector3 euler = rawRotation.eulerAngles;
+            Vector3 euler = pose.rotation.eulerAngles;
             euler.x = 0;
             euler.z = 0;
             Quaternion rotation = Quaternion.Euler(euler);

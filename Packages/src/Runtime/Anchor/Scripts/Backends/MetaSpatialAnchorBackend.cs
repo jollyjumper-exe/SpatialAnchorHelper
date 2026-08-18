@@ -29,7 +29,7 @@ namespace SAH
             }
         }
 
-        public Task<SAHAnchor> PlaceSpatialAnchor(Vector3 position, Quaternion rotation, GameObject prefab)
+        public Task<SAHAnchor> PlaceSpatialAnchor(Vector3 position, Quaternion rotation, Vector3 scale, GameObject prefab)
         {
             GameObject parent = GameObject.Find("SpatialAnchors");
             if (parent == null)
@@ -38,6 +38,7 @@ namespace SAH
             }
 
             GameObject instance = UnityEngine.Object.Instantiate(prefab, position, rotation, parent.transform);
+            instance.transform.localScale = scale;
 
             OVRSpatialAnchor nativeAnchor = instance.AddComponent<OVRSpatialAnchor>();
 

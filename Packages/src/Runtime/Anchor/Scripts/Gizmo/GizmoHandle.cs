@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 namespace SAH
 {
@@ -7,11 +7,12 @@ namespace SAH
     {
         X,
         Y,
-        Z
+        Z,
+        ALL
     }
 
     public class GizmoHandle : MonoBehaviour
     {
-        
+
     }
 }

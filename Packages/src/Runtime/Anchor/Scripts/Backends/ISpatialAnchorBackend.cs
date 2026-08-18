@@ -13,6 +13,7 @@ namespace SAH
         Task<SAHAnchor> PlaceSpatialAnchor(
             Vector3 position,
             Quaternion rotation,
+            Vector3 scale,
             GameObject prefab);
 
         void ClearSpatialAnchors();
