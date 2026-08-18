@@ -137,7 +137,7 @@ namespace SAH
 
         private void OnConfirmedSetupObject(SetupObject setupObject)
         {
-            PlaceSpatialAnchor(setupObject.transform, setupObject.prefabPath);
+            PlaceSpatialAnchor(setupObject.target, setupObject.prefabPath);
             RemovePendingSpatialAnchor(setupObject.gameObject);
         }
 

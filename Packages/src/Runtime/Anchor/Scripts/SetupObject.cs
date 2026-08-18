@@ -6,6 +6,7 @@ namespace SAH
 {
     public class SetupObject : MonoBehaviour
     {
+        // Position, Rotation, Scale
         public Action<SetupObject> OnConfirmed;
 
         public String prefabPath;
@@ -14,6 +15,8 @@ namespace SAH
         [SerializeField] private Gizmo _gizmo;
 
         private GameObject _ghostModel;
+
+        public Transform target => _gizmo.target;
 
         public void Start()
         {
@@ -58,7 +61,7 @@ namespace SAH
 
             _button.GetComponentInParent<Canvas>().transform.position = pos;
 
-            _gizmo.target = transform;
+            _gizmo.target = _ghostModel.transform;
 
         }
 

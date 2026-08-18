@@ -5,7 +5,7 @@ namespace SAH
 {
     public class Gizmo : MonoBehaviour
     {
-        [SerializeField] public Transform target;
+        public Transform target;
 
         private GizmoHandle _activeHandle = null;
 
