@@ -17,7 +17,6 @@ namespace SAH
             inputProvider as ISpatialAnchorPlacementInput;
 
         private bool _isPlacing = false;
-        private bool _wasPinchingLastFrame = false;
         private string _currentPrefabPath;
         private string _currentAnchorType;
         private GameObject _ghostModel;

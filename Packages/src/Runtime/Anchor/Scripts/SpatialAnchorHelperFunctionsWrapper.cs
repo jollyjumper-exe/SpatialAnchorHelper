@@ -1,9 +1,9 @@
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
-using Oculus.Interaction.Input;
-using UnityEditor;
 using System.Collections.Generic;
+using Oculus.Interaction.Input;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace SAH
 {
@@ -17,9 +17,9 @@ namespace SAH
             if (SpatialAnchorHelper.Instance != null) _spatialAnchorHelper = SpatialAnchorHelper.Instance;
         }
 
-        public void LoadSpatialAnchors()
+        public async void LoadSpatialAnchors()
         {
-            _spatialAnchorHelper.LoadSpatialAnchors(layoutID);
+            await _spatialAnchorHelper.LoadSpatialAnchors(layoutID);
         }
 
         public void SaveSpatialAnchors()

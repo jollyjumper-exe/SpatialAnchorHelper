@@ -4,8 +4,8 @@ public class LeftHandPinchMenu : MonoBehaviour
     [Header("References")]
     public OVRHand hand;
     public Camera xrCamera;
-    public GameObject menu; 
-    [SerializeField] bool activeOnStart; 
+    public GameObject menu;
+    [SerializeField] bool activeOnStart;
 
     [Header("Settings")]
     [Range(0f, 1f)] public float palmFacingThreshold = 0.1f;
@@ -17,7 +17,7 @@ public class LeftHandPinchMenu : MonoBehaviour
     {
         if (xrCamera == null)
         {
-            var rig = FindObjectOfType<OVRCameraRig>();
+            var rig = FindFirstObjectByType<OVRCameraRig>();
             if (rig != null) xrCamera = rig.centerEyeAnchor.GetComponent<Camera>();
         }
     }
@@ -32,7 +32,7 @@ public class LeftHandPinchMenu : MonoBehaviour
         {
             isActive = false;
         }
-        
+
         menu.SetActive(isActive);
     }
 

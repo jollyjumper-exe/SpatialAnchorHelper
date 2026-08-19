@@ -96,7 +96,7 @@ namespace SAH
                     continue;
                 }
 
-                var result = await nativeAnchor.SaveAsync();
+                var result = await nativeAnchor.SaveAnchorAsync();
                 if (result)
                 {
                     anchor.Id = nativeAnchor.Uuid.ToString();
@@ -194,7 +194,14 @@ namespace SAH
                 }
 
                 GameObject parent = GameObject.Find("SpatialAnchors") ?? new GameObject("SpatialAnchors");
-                Pose pose = unbound.Pose;
+
+                Pose pose = default;
+
+                if (!unbound.TryGetPose(out pose))
+                {
+                    Debug.Log("Failed to find pose!");
+                }
+
                 GameObject spawned = UnityEngine.Object.Instantiate(prefab, pose.position, pose.rotation, parent.transform);
 
                 // Older cache entries have no scale field. In that case, retain

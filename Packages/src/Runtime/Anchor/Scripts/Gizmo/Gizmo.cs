@@ -7,8 +7,6 @@ namespace SAH
     {
         public Transform target;
 
-        private GizmoHandle _activeHandle = null;
-
         void Awake()
         {
 
@@ -17,6 +15,7 @@ namespace SAH
         void Update()
         {
             if (target == null) return;
+
 
             transform.position = target.position;
             transform.rotation = target.rotation;

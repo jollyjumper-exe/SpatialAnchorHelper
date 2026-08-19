@@ -1,8 +1,8 @@
-using UnityEngine;
 using System.Collections;
+using System.Linq;
 using Oculus.Interaction;
 using Oculus.Interaction.HandGrab;
-using System.Linq;
+using UnityEngine;
 
 namespace SAH
 {
@@ -12,7 +12,7 @@ namespace SAH
         private bool _isActive = false;
 
         [SerializeField] private GizmoHandleAxis axis;
-        
+
         [SerializeField] private HandGrabInteractable _handGrabInteractable;
         public Transform _io;
         private Vector3 lastDir;
@@ -21,7 +21,7 @@ namespace SAH
 
         void Update()
         {
-            if (!_isActive || axis == null) return;
+            if (!_isActive) return;
 
             Vector3 handPos = _io.position;
             Vector3 targetPos = gizmo.target.position;
@@ -52,13 +52,13 @@ namespace SAH
 
         public void OnGrab()
         {
-            if(gizmo == null) return;
+            if (gizmo == null) return;
             _isActive = gizmo.TryActivateHandle(this);
-            if(!_isActive) return;
-            if(_handGrabInteractable == null) return;
-            
+            if (!_isActive) return;
+            if (_handGrabInteractable == null) return;
+
             _io = _handGrabInteractable.SelectingInteractors.First().WristPoint;
-            
+
             Vector3 targetPos = gizmo.target.position;
             lastDir = (_io.position - targetPos).normalized;
             initialTargetRot = gizmo.target.rotation;
@@ -66,7 +66,7 @@ namespace SAH
 
         public void OnRelease()
         {
-            if(!_isActive) return;
+            if (!_isActive) return;
             _isActive = false;
         }
     }
